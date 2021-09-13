@@ -1,4 +1,4 @@
 ### Midi player
 
 Simple midi reader and player
-This player only handled midi data and does
+This player does not produce sound it just outputs data to user. 
