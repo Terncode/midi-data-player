@@ -1,35 +1,23 @@
-const { loadMidi } = require('./../dist/midiLoader');
+const { Midi } = require('./../dist/midiLoader');
 const { MidiPlayer } = require('./../dist/midiPlayer');
-const { MIDI_MAP } = require('./../dist/notes');
 const path = require('path');
 
+(async () => {
+    const midi = new Midi();
+    const pathString = path.join(__dirname, 'test.mid'); 
+    await midi.loadFile(pathString);
 
-async function start() {
-    const pathString = path.join(__dirname, 'test.mid') 
-    const midiFile = await loadMidi(pathString);
-    const player = new MidiPlayer(midiFile);
-
-    player.on('noteOn', (track, trackId, time) => {
-        const note = MIDI_MAP[track.noteNumber];
-		if (note) {
-			console.log(`+ [${trackId}] Time: ${Math.round(time)} | ${note.noteName}`);
-        }
-    });
-    player.on('noteOff', (track, trackId, time) => {
-        const note = MIDI_MAP[track.noteNumber];
-        if (note) {
-			console.log(`- [${trackId}] Time: ${Math.round(time)} | ${note.noteName}`);
-        }
-    });
-    player.on('end', () => {
-        console.log('Test passed!');
-        process.exit();
-    });
+    const player = new MidiPlayer(midi);
+    player.on('Note on', data => {
+        console.log('Note on', data.noteNumber)
+    })
+    player.on('Note off', data =>{
+        console.log('Note off', data.noteNumber)
+    })
+    player.on('end', data => {
+        console.log("End");
+    })
     player.play();
-}
+})()
 
 
-start().catch(err => {
-    console.error(err);
-    process.exit(1);
-})
