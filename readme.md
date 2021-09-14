@@ -2,8 +2,7 @@
 
 Midi player based on https://github.com/grimmdude/MidiPlayerJS with full typescript support
 
-Simple midi reader and player.<br>
-This player does not produce sound it just outputs data to user. 
+Simple midi read reads midi file and outputs data in JSON events in realtime. This player only emits data it does not produce any sound
 
 
 

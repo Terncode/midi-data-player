@@ -1,6 +1,6 @@
-import { CIRCLE_OF_FIFTHS, CIRCLE_OF_FOURTHS } from "./midiConstants";
-import { MidiTrack } from "./midiTrack";
-import { BufferUtils } from "./utils";
+import { CIRCLE_OF_FIFTHS, CIRCLE_OF_FOURTHS } from './midiConstants';
+import { MidiTrack } from './midiTrack';
+import { BufferUtils } from './utils';
 
 export type MidiEventTypes = 'Unknown' | 'Pitch Bend' |
  'Channel Key Pressure' | 'Program Change' | 'Controller Change' | 'Polyphonic Key Pressure' |
@@ -10,11 +10,11 @@ export type MidiEventTypes = 'Unknown' | 'Pitch Bend' |
  'Copyright Notice' | 'Text Event' |  'Sequence Number'
 
 export interface BaseMidiEvent {
-	name: MidiEventTypes;
+    name: MidiEventTypes;
     track: number;
     delta: number;
-	tick: number;
-	byteIndex: number;
+    tick: number;
+    byteIndex: number;
 }
 
 export interface RunningMidiEvent extends BaseMidiEvent {
@@ -208,142 +208,142 @@ export class MidiEventEncoder {
     }
     static handle(hex: number, baseEvent: BaseMidiEvent, eventStartIndex: number, midiTrack: MidiTrack): MidiEvent {
         switch(hex) {
-            case 0x00:
-                return this.sequenceEvent(baseEvent);
-            case 0x01:
-                return this.textEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x02:
-                return this.copyrightNoticeEvent(baseEvent);
-            case 0x03:
-                return this.sequenceTrackNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x04:
-                return this.instrumentNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x05: 
-                return this.lyricEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x06:
-                return this.markerEvent(baseEvent);
-            case 0x07:
-                return this.cuePointEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x09:
-                return this.deviceNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
-            case 0x20:
-                return this.midiChannelPrefixEvent(baseEvent);
-            case 0x21:
-                return this.midiPortEvent(baseEvent, BufferUtils.bufferToNumber([midiTrack.buffer[eventStartIndex + 3]]))
-            case 0x2F:
-                return this.endOfTheTrackEvent(baseEvent);
-            case 0x51:
-                return this.setTempoEvent(baseEvent, Math.round(60000000 / BufferUtils.bufferToNumber(midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 6))))
-            case 0x54:
-                return this.smpteOffsetEvent(baseEvent);
-            case 0x58:
-                return this.timeSignatureEvent(baseEvent, midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 7))
-            case 0x59: 
-               return this.keySignatureEvent(baseEvent, midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 5));
-            case 0x7F: // Sequencer-Specific Meta-event
-                return this.sequencerSpecificMetaEvent(baseEvent);
+        case 0x00:
+            return this.sequenceEvent(baseEvent);
+        case 0x01:
+            return this.textEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x02:
+            return this.copyrightNoticeEvent(baseEvent);
+        case 0x03:
+            return this.sequenceTrackNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x04:
+            return this.instrumentNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x05: 
+            return this.lyricEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x06:
+            return this.markerEvent(baseEvent);
+        case 0x07:
+            return this.cuePointEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x09:
+            return this.deviceNameEvent(baseEvent, midiTrack.getStringData(eventStartIndex));
+        case 0x20:
+            return this.midiChannelPrefixEvent(baseEvent);
+        case 0x21:
+            return this.midiPortEvent(baseEvent, BufferUtils.bufferToNumber([midiTrack.buffer[eventStartIndex + 3]]));
+        case 0x2F:
+            return this.endOfTheTrackEvent(baseEvent);
+        case 0x51:
+            return this.setTempoEvent(baseEvent, Math.round(60000000 / BufferUtils.bufferToNumber(midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 6))));
+        case 0x54:
+            return this.smpteOffsetEvent(baseEvent);
+        case 0x58:
+            return this.timeSignatureEvent(baseEvent, midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 7));
+        case 0x59: 
+            return this.keySignatureEvent(baseEvent, midiTrack.buffer.subarray(eventStartIndex + 3, eventStartIndex + 5));
+        case 0x7F: // Sequencer-Specific Meta-event
+            return this.sequencerSpecificMetaEvent(baseEvent);
         }
-           // eventJson.name = 'Unknown: ' + this._buffer[eventStartIndex + 1].toString(16);
+        // eventJson.name = 'Unknown: ' + this._buffer[eventStartIndex + 1].toString(16);
         return this.unknownEvent(baseEvent, midiTrack.buffer[eventStartIndex + 1].toString(16));
     }
     static unknownEvent(event: BaseMidiEvent, data: string): MidiEventUnknown {
         return {
             ...event,
-            name: "Unknown",
+            name: 'Unknown',
             data
-        }
+        };
     }
     static sequenceEvent(event: BaseMidiEvent): MidiEventSequenceNumber {
         return { 
             ...event,
             name: 'Sequence Number'
-        }
+        };
     }
     static textEvent(event: BaseMidiEvent, text: string): MidiEventText {
         return { 
             ...event,
             name: 'Text Event',
             string: text,
-        }
+        };
     }
     static copyrightNoticeEvent(event: BaseMidiEvent): MidiEventCopyrightNotice {
         return { 
             ...event,
             name: 'Copyright Notice',
-        }
+        };
     }
     static sequenceTrackNameEvent(event: BaseMidiEvent, text: string): MidiEventSequenceTrackName {
         return { 
             ...event,
             name: 'Sequence/Track Name',
             string: text
-        }
+        };
     }
     static instrumentNameEvent(event: BaseMidiEvent, text: string): MidiEventInstrumentName {
         return { 
             ...event,
             name: 'Instrument Name',
             string: text
-        }
+        };
     }
     static lyricEvent(event: BaseMidiEvent, text: string): MidiEventLyric {
         return { 
             ...event,
             name: 'Lyric',
             string: text
-        }
+        };
     }
     static markerEvent(event: BaseMidiEvent): MidiEventMarker {
         return { 
             ...event,
             name: 'Marker',
-        }
+        };
     }
     static cuePointEvent(event: BaseMidiEvent, text: string): MidiEventCuePoint {
         return { 
             ...event,
             name: 'Cue Point',
             string: text,
-        }
+        };
     }
     static deviceNameEvent(event: BaseMidiEvent, text: string): MidiEventDeviceName {
         return { 
             ...event,
             name: 'Device Name',
             string: text,
-        }
+        };
     }
     static midiChannelPrefixEvent(event: BaseMidiEvent): MidiEventMidiChannelPrefix {
         return { 
             ...event,
             name: 'MIDI Channel Prefix',
-        }
+        };
     }
     static midiPortEvent(event: BaseMidiEvent, port: number): MidiEventMidiPort {
         return { 
             ...event,
             name: 'MIDI Port',
             data: port
-        }
+        };
     }
     static endOfTheTrackEvent(event: BaseMidiEvent): MidiEventEndOfTheTrack {
         return { 
             ...event,
             name: 'End of Track'
-        }
+        };
     }
     static setTempoEvent(event: BaseMidiEvent, tempo: number): MidiEventSetTempo {
         return { 
             ...event,
             name: 'Set Tempo',
             data: tempo
-        }
+        };
     }
     static smpteOffsetEvent(event: BaseMidiEvent): MidiEventSMTPEOffset {
         return { 
             ...event,
             name: 'SMTPE Offset',
-        }
+        };
     }
     static timeSignatureEvent(event: BaseMidiEvent, data: Buffer): MidiEventTimeSignature {
         return { 
@@ -351,7 +351,7 @@ export class MidiEventEncoder {
             name: 'Time Signature',
             data: data,
             timeSignature: `${data[0]}/${Math.pow(2, data[1])}`,
-        }
+        };
     }
     static keySignatureEvent(event: BaseMidiEvent, data: Buffer): MidiEventKeySignature {
         const eventJson: MidiEventKeySignature = { 
@@ -370,10 +370,10 @@ export class MidiEventEncoder {
         }
 
         if (eventJson.data[1] == 0) {
-            eventJson.keySignature += " Major";
+            eventJson.keySignature += ' Major';
 
         } else if (eventJson.data[1] == 1) {
-            eventJson.keySignature += " Minor";
+            eventJson.keySignature += ' Minor';
         }
         return eventJson;
     }
@@ -382,27 +382,27 @@ export class MidiEventEncoder {
             ...event,
             name: 'Sysex',
             data: data,
-        }
+        };
     }
     static sysexEscapeEvent(event: BaseMidiEvent, data: Buffer): MidiEventSysexEscape {
         return { 
             ...event,
             name: 'Sysex (escape)',
             data: data,
-        }
+        };
     }
     static sequencerSpecificMetaEvent(event: BaseMidiEvent): MidiEventSequencerSpecificMetaEvent {
         return { 
             ...event,
             name: 'Sequencer-Specific Meta-event',
-        }
+        };
     }
     static noteOnEvent(event: BaseMidiEvent | RunningMidiEvent, channel: number, noteNumber?: number, velocity?: number, noteName?: string): MidiEventRunnableNoteOn | MidiEventNoteOn {
         const newEvent: Partial<MidiEventNoteOn> = {
             ...event,
             name: 'Note on',
             channel,
-        }
+        };
         if (noteNumber !== undefined) {
             newEvent.noteNumber = noteNumber;
         }
@@ -419,7 +419,7 @@ export class MidiEventEncoder {
             ...event,
             name: 'Note off',
             channel,
-        }
+        };
         if (noteNumber !== undefined) {
             newEvent.noteNumber = noteNumber;
         }
@@ -437,7 +437,7 @@ export class MidiEventEncoder {
             ...event,
             name: 'Polyphonic Key Pressure',
             channel,
-        }
+        };
         if (note !== undefined) {
             newEvent.note = note;
         }
@@ -454,7 +454,7 @@ export class MidiEventEncoder {
             channel,
             number,
             value
-        }
+        };
         return newEvent as any;
     }
     static programChangeEvent(event: BaseMidiEvent | RunningMidiEvent, channel: number, value: number): MidiEventRunnableProgramChange | MidiEventProgramChange {
@@ -463,7 +463,7 @@ export class MidiEventEncoder {
             name: 'Program Change',
             channel,
             value,
-        }
+        };
         return newEvent as any;
     }
     static channelKeyPressureEvent(event: BaseMidiEvent | RunningMidiEvent, channel: number): MidiEventRunnableChannelKeyPressure | MidiEventChannelKeyPressure {
@@ -471,7 +471,7 @@ export class MidiEventEncoder {
             ...event,
             name: 'Channel Key Pressure',
             channel,
-        }
+        };
         return newEvent as any;
     }
     static pitchBendEvent(event: BaseMidiEvent | RunningMidiEvent, channel: number, value?: number): MidiEventRunnablePitchBend | MidiEventPitchBend {
@@ -479,7 +479,7 @@ export class MidiEventEncoder {
             ...event,
             name: 'Pitch Bend',
             channel,
-        }
+        };
         if (value !== undefined) {
             newEvent.value = value;
         }
