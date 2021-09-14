@@ -2,7 +2,7 @@
 
 Midi player based on https://github.com/grimmdude/MidiPlayerJS with full typescript support
 
-Simple midi read reads midi file and outputs data in JSON events in realtime. This player only emits data it does not produce any sound
+Simple midi reader. It reads midi file and outputs data in JSON events in realtime. This player only emits data it does not produce any sound!
 
 
 
